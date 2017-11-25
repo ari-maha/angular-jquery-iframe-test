@@ -1,0 +1,61 @@
+<!DOCTYPE>
+<html lang="en" ng-app="warforgeIframeSample">
+    <head>
+        <meta charset="utf-8">
+        <title>Warforge Iframe Test App</title> 
+        <style>
+            html, body, iframe {
+                height: 100vh;
+                width: 100vw;
+                margin : 0;
+                padding: 0;
+            }
+            iframe {
+                outline: none;
+                border: none;
+            }
+        </style>
+    </head>
+    <body>
+        <iframe id="angularApp" src="./wfangular/index.html"></iframe>
+        <iframe id="gwtApp" src="./wfgwt/index.html" style="display: none"></iframe>
+
+        <script>
+            
+            var angularElemet = document.getElementById("angularApp"),
+                gwtElement = document.getElementById("gwtApp");
+
+            var displayMessage = function(evt) {
+                console.log(evt.data);
+
+                var messageArray = evt.data.split(":");
+                
+                console.log(messageArray);
+
+                switch(messageArray[0]) {
+                    case "angular" :
+                        angularElemet.contentWindow.postMessage(messageArray[1], "http://localhost:8000");
+                        gwtElement.style.display = "none";
+                        angularElemet.style.display = "block";
+                        break;
+                    case "gwt" :
+                        gwtElement.contentWindow.postMessage(messageArray[1], "http://localhost:8000");
+                        angularElemet.style.display = "none";
+                        gwtElement.style.display = "block";
+                        break;
+                    default :
+                        alert("invalid key returned from one of the windows");
+                        return;
+                }
+
+            }
+
+            if (window.addEventListener) {
+                window.addEventListener("message", displayMessage, false);
+            }
+            else {
+                window.attachEvent("onmessage", displayMessage);
+            }
+        </script>
+    </body>
+</html>
